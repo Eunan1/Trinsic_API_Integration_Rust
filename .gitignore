@@ -1,0 +1,10 @@
+# Ignore environment variables
+.env
+
+# Ignore node_modules (if applicable for your project)
+node_modules/
+
+# Ignore build files
+target/
+
+# Add other files you want Git to ignore

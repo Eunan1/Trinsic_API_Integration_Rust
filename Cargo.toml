@@ -1,0 +1,13 @@
+[package]
+name = "trinsic_api_integration"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+reqwest = { version = "0.11", features = ["json"] }
+tokio = { version = "1", features = ["full"] }
+tokio-postgres = "0.7"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+dotenv = "0.15"
+warp = "0.3"
