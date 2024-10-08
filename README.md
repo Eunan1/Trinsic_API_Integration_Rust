@@ -23,7 +23,7 @@ The project is composed of the different modules explained below:
   - Auth token is required in the request header, but it is not exposed in this repository (see security details below).
 
 - setup_db.rs:
-  - Creates a Postgres table if it doesn't already exist
+  - Creates the necessary Postgres table layout if it doesn't already exist.
   - Prepares the database to store session data: ID (Primary Key), FailCode, LaunchUrl, and ClientToken.
 
 - session_storage.rs:
@@ -58,32 +58,43 @@ The project is composed of the different modules explained below:
 git clone https://github.com/Eunan1/trinsic-api-rust-integration.git
 cd trinsic-api-rust-integration
 ```
-2. Create a new .env file
+2. Install and run a Postgres instance locally or remotely.
+  - Help with installing PostgreSQL on any machine can be found here:
+  - Help with running a PostgreSQL service and checking for tables can be found here:
+3. Create a new .env file
 ```bash
 touch .env
 ```
-3. In the .env file add the following fields (Replace with your actual credentials).
+4. In the .env file add the following fields (Replace with your actual credentials).
 ```bash
 TRINSIC_AUTH_TOKEN=your_trinsic_auth_token
+TRINSIC_API_ENDPOINT=trinsic_api_endpoint
 
 DB_HOST=your_db_host
 DB_USER=your_db_user
 DB_PASSWORD=your_db_password
 DB_NAME=your_db_name
-TRINSIC_API_ENDPOINT=trinsi_api_endpoint
+
 ```
 
-4. Run the project
+5. Run the project
 ```bash
 cargo run
 ```
 
 ### Interacting with the API
-1. Create a Session: When the button on the frontend is pressed, a GET request is sent to the server, triggering the session process:
-  - It sends a POST request to the Trinsic API.
+1. Create a Session: When a GET request is sent to the server at listener.rs, this calls handle_session.rs which starts the Trinsic session creation and management workflow:
+  - A POST request is sent to the Trinsic API.
   - Receives the JSON response.
-  - Stores the session details in the database.
-2. Retrieve the Latest Launch URL: Once the session is created, you can retrieve the LaunchUrl via a GET request to the server. This will return the most recently stored LaunchUrl from the database.
+  - Returns necessary information in a readble format.
+  - Creates the table to store this information
+  - Stores the desired session details in the database.
+  - Queries the database to get the most recent LaunchUrl entered into the table.
+
+2. Retrieve the Latest Launch URL: Use the curl command below to send a simple GET request to the server and test to see if it returns the LaunchURL.
+  ```bash
+  curl http://localhost:8000/create_session
+  ```
 
 
 ## Security
