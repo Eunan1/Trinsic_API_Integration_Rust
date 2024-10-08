@@ -6,5 +6,3 @@ node_modules/
 
 # Ignore build files
 target/
-
-# Add other files you want Git to ignores
