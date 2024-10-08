@@ -38,16 +38,18 @@ The project is composed of the different modules explained below:
   - Stores the returned JSON data into the Postgres table.
   - Queries the table and returns the most recent LaunchUrl entry into the table.
 
+- listener.rs
+  - Listens for incoming GET requests and calls handle_session.rs to execute the session workflow.
+
 - main.rs
   - Acts as the entry point to the server.
-  - Listens for incoming GET requests and calls handle_session.rs to execute the session workflow.
 
 
 
 ## Usage
 ### Prerequisites 
 - Rust installed on your machine.
-- Run a Postgres instance locally or remotely.
+- Install Postgres and run an instance locally or remotely.
 - A Trinsic account to receive necessary authentication tokens.
 
 ### Environment Setup
@@ -63,11 +65,14 @@ touch .env
 3. In the .env file add the following fields (Replace with your actual credentials).
 ```bash
 TRINSIC_AUTH_TOKEN=your_trinsic_auth_token
+
 DB_HOST=your_db_host
 DB_USER=your_db_user
 DB_PASSWORD=your_db_password
 DB_NAME=your_db_name
+TRINSIC_API_ENDPOINT=trinsi_api_endpoint
 ```
+
 4. Run the project
 ```bash
 cargo run
