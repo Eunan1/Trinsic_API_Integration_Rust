@@ -3,20 +3,42 @@ use serde::{Deserialize, Serialize};
 use std::error::Error;
 use dotenv::dotenv;
 use std::env;
+use log::error;
 
 // Struct to represent the session creator
 pub struct CreateSession {
     client: Client,
     authorization: String,
+    api_endpoint: String,
 }
 
 // Implement CreateSession functionality
 impl CreateSession {
     // Constructor to create a new session object
     pub fn new() -> Result<Self, Box<dyn Error>> {
+        // Load environment variables from the .env file
+        dotenv().ok();
+        // Initialize new client
         let client = Client::new();
-        let authorization = get_authorization_token()?;
-        Ok(CreateSession { client, authorization })
+
+        // Get authorization token from env and handle errors
+        let authorization = match get_authorization_token() {
+            Ok(token) => token,
+            Err(e) => {
+                error!("Failed to get authorization token: {}", e);
+                return Err(e);
+            }
+        };
+
+        // Get API endpoint from environment variables
+        let api_endpoint = match env::var("TRINSIC_API_ENDPOINT") {
+            Ok(endpoint) => endpoint,
+            Err(e) => {
+                error!("Missing TRINSIC_API_ENDPOINT in environment variables: {}", e);
+                return Err(e.into());
+            }
+        };
+        Ok(CreateSession { client, authorization, api_endpoint })
     }
 
     // Function to create a session
@@ -25,16 +47,29 @@ impl CreateSession {
             launch_provider_directly: false,
         };
 
-        let response = self
+        let response = match self
             .client
-            .post("https://api.trinsic.id/api/v1/sessions")
+            .post(&self.api_endpoint)
             .bearer_auth(&self.authorization)
             .json(&request_body)
             .send()
-            .await?;
+            .await
+            {
+                Ok(res) => res,
+                Err(e) => {
+                    error!("Failed to send create session request: {}", e);
+                    return Err(e.into());
+                }
+            };
 
-        let session_response = response.json::<CreateSessionResponse>().await?;
-        Ok(session_response)
+        // Attempt to parse the response and catch errors
+        match response.json::<CreateSessionResponse>().await {
+            Ok(session_response) => Ok(session_response),
+            Err(e) => {
+                error!("Failed to parse session response: {}", e);
+                Err(e.into())
+            }
+        }
     }
 }
 
@@ -66,5 +101,8 @@ pub struct Session {
 // Fetch the authorization token from an environment variable
 fn get_authorization_token() -> Result<String, Box<dyn Error>> {
     dotenv().ok();
-    env::var("TRINSIC_AUTH_TOKEN").map_err(|_| "Missing authorization token".into())
+    env::var("TRINSIC_AUTH_TOKEN").map_err(|_| {
+        error!("Missing authorization token in environment variables.");
+        "Missing authorization token".into()
+    })
 }
