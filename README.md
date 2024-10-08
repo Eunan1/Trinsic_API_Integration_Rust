@@ -59,8 +59,8 @@ git clone https://github.com/Eunan1/trinsic-api-rust-integration.git
 cd trinsic-api-rust-integration
 ```
 2. Install and run a Postgres instance locally or remotely.
-  - Help with installing PostgreSQL on any machine can be found here: [Download PostgreSQL](https://www.postgresql.org/download/)
-  - Help with running a PostgreSQL service and checking for tables can be found here: [PostgreSQL Getting Started](https://www.postgresql.org/docs/current/tutorial-start.html)
+  - Help with installing PostgreSQL on any machine can be found here: [Download PostgreSQL](https://www.postgresql.org/download/).
+  - Help with running a PostgreSQL service and checking for tables can be found here: [PostgreSQL Getting Started](https://www.postgresql.org/docs/current/tutorial-start.html).
 3. Create a new .env file
 ```bash
 touch .env
